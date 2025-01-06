@@ -158,49 +158,49 @@
         document.getElementById('outputText').textContent = translated.join(' ');
     }
 
-function translateToEnglish() {
-    const text = document.getElementById('inputText').value;
-    const words = text.split(' ');
-    const translated = words.map(word => {
-        let originalWord = word;
+    function translateToEnglish() {
+        const text = document.getElementById('inputText').value;
+        const words = text.split(' ');
+        const translated = words.map(word => {
+            let originalWord = word;
 
-        // Step 6: Handle one-letter words
-        if (originalWord.length === 1) {
-            return originalWord.endsWith('l') ? originalWord.slice(0, -1) : originalWord;
-        }
+            // Step 6: Handle one-letter words
+            if (originalWord.length === 1) {
+                return originalWord.endsWith('l') ? originalWord.slice(0, -1) : originalWord;
+            }
 
-        // Step 5: Handle two-letter words
-        if (originalWord.length === 2) {
-            return originalWord.endsWith('l') ? originalWord.slice(0, -1).split('').reverse().join('') : originalWord.split('').reverse().join('');
-        }
+            // Step 5: Handle two-letter words
+            if (originalWord.length === 2) {
+                return originalWord.endsWith('l') ? originalWord.slice(0, -1).split('').reverse().join('') : originalWord.split('').reverse().join('');
+            }
 
-        // Step 1: Remove prefix "la-" or leading "y"
-        if (originalWord.startsWith("la")) {
-            originalWord = originalWord.slice(2);
-        } else if (originalWord.startsWith("y")) {
-            originalWord = originalWord.slice(1);
-        }
+            // Step 1: Remove prefix "la-" or leading "y"
+            if (originalWord.startsWith("la")) {
+                originalWord = originalWord.slice(2);
+            } else if (originalWord.startsWith("y")) {
+                originalWord = originalWord.slice(1);
+            }
 
-        // Step 2: Undo letter swap at the end
-        if (originalWord.length > 1) {
-            const lastChar = originalWord.slice(-1);
-            const secondLastChar = originalWord.slice(-2, -1);
-            originalWord = originalWord.slice(0, -2) + lastChar + secondLastChar;
-        }
+            // Step 2: Undo letter swap at the end
+            if (originalWord.length > 1) {
+                const lastChar = originalWord.slice(-1);
+                const secondLastChar = originalWord.slice(-2, -1);
+                originalWord = originalWord.slice(0, -2) + lastChar + secondLastChar;
+            }
 
-        // Step 3: Remove appended first letter and replace "y" at the start if necessary
-        const appendedLetter = originalWord.slice(-1);
-        if (appendedLetter === 'y') {
-            originalWord = originalWord.slice(0, -1);
-        }
-        const originalStartLetter = originalWord.slice(-1);
-        originalWord = originalStartLetter + originalWord.slice(0, -1);
+            // Step 3: Remove appended first letter and replace "y" at the start if necessary
+            const appendedLetter = originalWord.slice(-1);
+            if (appendedLetter === 'y') {
+                originalWord = originalWord.slice(0, -1);
+            }
+            const originalStartLetter = originalWord.slice(-1);
+            originalWord = originalStartLetter + originalWord.slice(0, -1);
 
-        return originalWord;
-    });
+            return originalWord;
+        });
 
-    document.getElementById('outputText').textContent = translated.join(' ');
-}
+        document.getElementById('outputText').textContent = translated.join(' ');
+    }
 
 </script>
 
