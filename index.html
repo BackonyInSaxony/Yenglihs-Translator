@@ -86,7 +86,7 @@
     <div class="content">
         <div class="rules">
             <h2>What is Yenglihs?</h2>
-            <p>Yenglihs is a fun, playful way to transform words. It's not a serious language, but rather a set of simple rules to modify text for entertainment. It can take English (or other Latin-script words) and convert them into a unique form!</p>
+            <p>Yenglihs is a fun, playful way to transform words. It's not a serious language, but rather a set of simple rules to modify text for entertainment. It can take English (or other Latin-script words) and convert them into the best thing known to man. (Oh yeah, also, please note that the "English translator" doesn't work well and  brings out wrong stuff. So please put two and two together to realize what's the word supposed to be while I fix this! Thank you)<p>
 
             <h2>How Does Yenglihs Work?</h2>
             <p>Rules for Yenglihs:</p>
@@ -101,15 +101,18 @@
             </ol>
             <p>These rules must be followed in order to properly transform words.</p>
 
+            <h2>How to Reverse Yenglihs?</h2>
+            <p>To reverse Yenglihs back to the original word, follow these steps in reverse:</p>
             <ol>
-                <li>If the word starts with "y", remove it. If the word starts with "la-", remove the prefix instead.</li>
-                <li>Swap the last two letters back to their original positions.</li>
-                <li>Remove the appended first letter from the end of the word. If there's an extra "y" added before the last letter, remove it as well. If "y" was the first letter, replace it with the letter that was appended to the end.</li>
-                <li>Reconstruct the word into its original form based on the above steps.</li>
-                <li>If the word is two letters, swap the first and second letters and remove "l" at the end if it's present.</li>
-                <li>If the word is a single letter and ends with "l," remove the "l."</li>
+                <li>Remove the first letter (if it's "y") or the prefix "la-" (if present).</li>
+                <li>Undo the letter swap at the end of the word.</li>
+                <li>Remove the appended first letter from the end of the word (and remove any "y" inserted in step 7), and replace "y" (if it's the first letter) with the first letter from the end.</li>
+                <li>Restore the word to its original form.</li>
+                <li>If the word is two letters, swap the place of the first two letters and remove the "l" at the end.</li>
+                <li>If the word is one letter, remove the "l" if there's any.</li>
             </ol>
-
+            
+        </div>
 
         <div class="translator">
             <textarea id="inputText" placeholder="Type your sentence here..."></textarea>
@@ -136,7 +139,7 @@
                 if (transformed[0].toLowerCase() !== 'y') {
                     transformed = 'y' + transformed.slice(1);
                 } else {
-                    transformed = 'la-' + transformed;
+                    transformed = 'la' + transformed;
                 }
 
                 const len = transformed.length;
@@ -159,48 +162,48 @@
     }
 
     function translateToEnglish() {
-        const text = document.getElementById('inputText').value;
-        const words = text.split(' ');
-        const translated = words.map(word => {
-            let originalWord = word;
+    const text = document.getElementById('inputText').value;
+    const words = text.split(' ');
+    const translated = words.map(word => {
+        let originalWord = word;
 
-            // Step 6: Handle one-letter words
-            if (originalWord.length === 1) {
-                return originalWord.endsWith('l') ? originalWord.slice(0, -1) : originalWord;
-            }
+        // Step 6: Handle one-letter words
+        if (originalWord.length === 1) {
+            return originalWord.endsWith('l') ? originalWord.slice(0, -1) : originalWord;
+        }
 
-            // Step 5: Handle two-letter words
-            if (originalWord.length === 2) {
-                return originalWord.endsWith('l') ? originalWord.slice(0, -1).split('').reverse().join('') : originalWord.split('').reverse().join('');
-            }
+        // Step 5: Handle two-letter words
+        if (originalWord.length === 2) {
+            return originalWord.endsWith('l') ? originalWord.slice(0, -1).split('').reverse().join('') : originalWord.split('').reverse().join('');
+        }
 
-            // Step 1: Remove prefix "la-" or leading "y"
-            if (originalWord.startsWith("la")) {
-                originalWord = originalWord.slice(2);
-            } else if (originalWord.startsWith("y")) {
-                originalWord = originalWord.slice(1);
-            }
+        // Step 1: Remove prefix "la-" or leading "y"
+        if (originalWord.startsWith("la")) {
+            originalWord = originalWord.slice(2);
+        } else if (originalWord.startsWith("y")) {
+            originalWord = originalWord.slice(1);
+        }
 
-            // Step 2: Undo letter swap at the end
-            if (originalWord.length > 1) {
-                const lastChar = originalWord.slice(-1);
-                const secondLastChar = originalWord.slice(-2, -1);
-                originalWord = originalWord.slice(0, -2) + lastChar + secondLastChar;
-            }
+        // Step 2: Undo letter swap at the end
+        if (originalWord.length > 1) {
+            const lastChar = originalWord.slice(-1);
+            const secondLastChar = originalWord.slice(-2, -1);
+            originalWord = originalWord.slice(0, -2) + lastChar + secondLastChar;
+        }
 
-            // Step 3: Remove appended first letter and replace "y" at the start if necessary
-            const appendedLetter = originalWord.slice(-1);
-            if (appendedLetter === 'y') {
-                originalWord = originalWord.slice(0, -1);
-            }
-            const originalStartLetter = originalWord.slice(-1);
-            originalWord = originalStartLetter + originalWord.slice(0, -1);
+        // Step 3: Remove appended first letter and replace "y" at the start if necessary
+        const appendedLetter = originalWord.slice(-1);
+        if (appendedLetter === 'y') {
+            originalWord = originalWord.slice(0, -1);
+        }
+        const originalStartLetter = originalWord.slice(-1);
+        originalWord = originalStartLetter + originalWord.slice(0, -1);
 
-            return originalWord;
-        });
+        return originalWord;
+    });
 
-        document.getElementById('outputText').textContent = translated.join(' ');
-    }
+    document.getElementById('outputText').textContent = translated.join(' ');
+}
 
 </script>
 
