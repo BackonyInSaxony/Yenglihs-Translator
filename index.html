@@ -117,7 +117,7 @@
         <div class="translator">
             <textarea id="inputText" placeholder="Type your sentence here..."></textarea>
             <button onclick="translateToYenglihs()">Translate to Yenglihs</button>
-            <button onclick="translateToEnglish()">Translate to English</button>
+            <button onclick="translateToEnglish()">Translate to Original</button>
         </div>
 
         <div class="output" id="outputText"></div>
@@ -168,45 +168,41 @@ function translateToYenglihs() {
     document.getElementById('outputText').textContent = translated.join(' ');
 }
 
-    function translateToEnglish() {
+function translateToEnglish() {
     const text = document.getElementById('inputText').value;
     const words = text.split(' ');
     const translated = words.map(word => {
         let originalWord = word;
 
-        // Step 6: Handle one-letter words
         if (originalWord.length === 1) {
+            // Step 5: Handle one-letter words
             return originalWord.endsWith('l') ? originalWord.slice(0, -1) : originalWord;
         }
 
-        // Step 5: Handle two-letter words
         if (originalWord.length === 2) {
+            // Step 4: Handle two-letter words
             return originalWord.endsWith('l') ? originalWord.slice(0, -1).split('').reverse().join('') : originalWord.split('').reverse().join('');
         }
 
-        // Step 1: Remove prefix "la-" or leading "y"
+        // Step 7: Remove appended first letter and the intermediate "y" if present
+        const lastChar = originalWord.slice(-1).toLowerCase();
+        originalWord = originalWord.slice(0, -1);
+        if (originalWord.endsWith('y') && 'aeiou'.includes(lastChar)) {
+            originalWord = originalWord.slice(0, -1);
+        }
+
+        // Step 3: Undo the letter swap at the end
+        const len = originalWord.length;
+        originalWord = originalWord.slice(0, len - 2) + originalWord[len - 1] + originalWord[len - 2];
+
+        // Step 1 or 2: Remove prefix "la-" or leading "y"
         if (originalWord.startsWith("la")) {
             originalWord = originalWord.slice(2);
         } else if (originalWord.startsWith("y")) {
             originalWord = originalWord.slice(1);
         }
 
-        // Step 2: Undo letter swap at the end
-        if (originalWord.length > 1) {
-            const lastChar = originalWord.slice(-1);
-            const secondLastChar = originalWord.slice(-2, -1);
-            originalWord = originalWord.slice(0, -2) + lastChar + secondLastChar;
-        }
-
-        // Step 3: Remove appended first letter and replace "y" at the start if necessary
-        const appendedLetter = originalWord.slice(-1);
-        if (appendedLetter === 'y') {
-            originalWord = originalWord.slice(0, -1);
-        }
-        const originalStartLetter = originalWord.slice(-1);
-        originalWord = originalStartLetter + originalWord.slice(0, -1);
-
-        return originalWord;
+        return lastChar + originalWord;
     });
 
     document.getElementById('outputText').textContent = translated.join(' ');
