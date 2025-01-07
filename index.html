@@ -125,41 +125,48 @@
 </div>
 
 <script>
-    function translateToYenglihs() {
-        const text = document.getElementById('inputText').value;
-        const words = text.split(' ');
-        const translated = words.map(word => {
-            if (word.length === 1) {
-                return 'aeiou'.includes(word.toLowerCase()) ? word + 'l' : word;
-            } else if (word.length === 2) {
-                const swapped = word[1] + word[0];
-                return 'aeiou'.includes(word[1].toLowerCase()) ? swapped + 'l' : swapped;
+function translateToYenglihs() {
+    const text = document.getElementById('inputText').value;
+    const words = text.split(' ');
+    const translated = words.map(word => {
+        let transformed = '';
+
+        if (word.length === 1) {
+            // Step 5: Handle one-letter words
+            transformed = 'aeiou'.includes(word.toLowerCase()) ? word + 'l' : word;
+        } else if (word.length === 2) {
+            // Step 4: Handle two-letter words
+            const swapped = word[1] + word[0];
+            transformed = 'aeiou'.includes(swapped[1].toLowerCase()) ? swapped + 'l' : swapped;
+        } else {
+            // Step 1: Replace the first letter with "y" or add "la-" if it starts with "y"
+            if (word[0].toLowerCase() !== 'y') {
+                transformed = 'y' + word.slice(1);
             } else {
-                let transformed = word;
-                if (transformed[0].toLowerCase() !== 'y') {
-                    transformed = 'y' + transformed.slice(1);
-                } else {
-                    transformed = 'la' + transformed;
-                }
-
-                const len = transformed.length;
-                transformed = transformed.slice(0, len - 2) + transformed[len - 1] + transformed[len - 2];
-
-                if ('aeiou'.includes(transformed[transformed.length - 1].toLowerCase())) {
-                    transformed += 'l';
-                }
-
-                const firstOriginal = word[0].toLowerCase();
-                if ('aeiou'.includes(firstOriginal) === 'aeiou'.includes(transformed[transformed.length - 1].toLowerCase())) {
-                    transformed += 'y';
-                }
-
-                transformed += firstOriginal;
-                return transformed;
+                transformed = 'la' + word;
             }
-        });
-        document.getElementById('outputText').textContent = translated.join(' ');
-    }
+
+            // Step 2: Swap the position of the last two letters
+            const len = transformed.length;
+            transformed = transformed.slice(0, len - 2) + transformed[len - 1] + transformed[len - 2];
+
+            // Step 3: Add "l" if the word ends with a vowel
+            if ('aeiouy'.includes(transformed[transformed.length - 1].toLowerCase())) {
+                transformed += 'l';
+            }
+
+            // Step 4: Append the first letter of the original word to the end, with "y" if needed
+            const firstOriginal = word[0].toLowerCase();
+            if ('aeiou'.includes(firstOriginal) === 'aeiou'.includes(transformed[transformed.length - 1].toLowerCase())) {
+                transformed += 'y';
+            }
+            transformed += firstOriginal;
+        }
+
+        return transformed;
+    });
+    document.getElementById('outputText').textContent = translated.join(' ');
+}
 
     function translateToEnglish() {
     const text = document.getElementById('inputText').value;
