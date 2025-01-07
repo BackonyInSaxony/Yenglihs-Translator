@@ -135,10 +135,19 @@
 </div>
 
 <script>
+    function isLetter(char) {
+        return char.toLowerCase() !== char.toUpperCase();
+    }
+
     function translateToYenglihs() {
         const text = document.getElementById('inputText').value;
         const words = text.split(' ');
         const translated = words.map(word => {
+            if (!word.split('').some(isLetter)) {
+                // Return symbols and punctuation as is
+                return word;
+            }
+
             let transformed = '';
 
             if (word.length === 1) {
@@ -182,6 +191,11 @@
         const text = document.getElementById('inputText').value;
         const words = text.split(' ');
         const translated = words.map(word => {
+            if (!word.split('').some(isLetter)) {
+                // Return symbols and punctuation as is
+                return word;
+            }
+
             let originalWord = word;
 
             if (originalWord.length === 1) {
