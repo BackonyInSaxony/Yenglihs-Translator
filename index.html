@@ -129,25 +129,30 @@
         <!-- Description of Yenglihs Rules -->
         <div class="description">
             <h2>About Yenglihs</h2>
-            <p>
-                Yenglihs modifies words with playful rules for entertainment. Input English (or any Latin-based) text, and watch it transform!
-            </p>
-            <h2>Yenglihs Transformation Rules</h2>
+            <p>Yenglihs is a language to transform words. It's not a serious language, but rather a set of simple rules to modify text for entertainment. It can take English (or other Latin-script words) and convert them into the best thing known to man. (Oh yeah, also, please note that the "English translator" doesn't work well and  brings out wrong stuff. So please put two and two together to realise what the word is supposed to be while I fix this! Thank you :)</p>
+
+            <h2>How Does Yenglihs Work?</h2>
+            <p>Rules for Yenglihs:</p>
             <ol>
-                <li>Replace first character with <code>y</code>, unless it already starts with <code>y</code>.</li>
-                <li>If word starts with <code>y</code>, prefix with <code>la-</code>.</li>
-                <li>Swap the final two letters of the word.</li>
-                <li>For 2-letter words, swap the letters and append <code>l</code> if it ends in a vowel.</li>
-                <li>For 1-letter vowels, append <code>l</code>.</li>
-                <li>Append <code>l</code> to words ending in a vowel.</li>
-                <li>For words &ge;3 letters, append original first letter; if both it and the last letter are same type (vowel/consonant), insert <code>y</code> between.</li>
+                <li>Take any word and replace the first letter with "y" (e.g., Hello -> Yello).</li>
+                <li>If a word already begins with "y", add the prefix "la-" instead (e.g., Yellow -> Layellow).</li>
+                <li>Swap the last two letters of the word (e.g., Layellow -> Layellwo).</li>
+                <li>If a word has only two letters, swap them and add "l" if the word ends in a vowel (e.g., As -> Sal).</li>
+                <li>If a word has only one letter and is a vowel, add "l" (e.g., A -> Al).</li>
+                <li>Add "l" at the end of words ending in a vowel (e.g., Me -> Mel).</li>
+                <li>For words with at least three letters, append the first letter of the original word to the end of the transformed word. If both the appended letter and the last letter of the word are vowels or consonants, add "y" between them (e.g., Apple -> Ypplea -> Yppleya) </li>
             </ol>
-            <h2>Reversing Yenglihs</h2>
+            <p>These rules must be followed to transform words properly.</p>
+
+            <h2>How to Reverse Yenglihs?</h2>
+            <p>To reverse Yenglihs back to the original word, follow these steps in reverse:</p>
             <ol>
-                <li>Remove leading <code>y</code> or <code>la-</code> prefix.</li>
-                <li>Swap last two letters back.</li>
-                <li>Remove appended first letter (and any inserted <code>y</code>).</li>
-                <li>Undo vowel <code>l</code> additions for 1- or 2-letter words.</li>
+                <li>Remove the first letter (if it's "y") or the prefix "la-" (if present).</li>
+                <li>Undo the letter swap at the end of the word.</li>
+                <li>Remove the appended first letter from the end of the word (and remove any "y" inserted in step 7), and replace "y" (if it's the first letter) with the first letter from the end.</l[...]
+                <li>Restore the word to its original form.</li>
+                <li>If the word is two letters, swap the place of the first two letters and remove the "l" at the end.</li>
+                <li>If the word is one letter, remove the "l" if there's any.</li>
             </ol>
         </div>
 
