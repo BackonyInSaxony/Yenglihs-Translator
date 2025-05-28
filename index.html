@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yenglihs Translator</title>
     <style>
-        /* Modern color palette */
+        /* color palette */
         :root {
             --primary: #4361ee;
             --primary-dark: #3a56d4;
@@ -324,7 +324,7 @@
         <!-- Header with title -->
         <div class="header">
             <h1>Yenglihs Translator</h1>
-            <p>The best thing known to man</p>
+            <p>The best thing known to man!</p>
         </div>
 
         <div class="grid-container">
@@ -462,8 +462,12 @@
          * Converts input text to Modern Yenglihs by splitting on whitespace and transforming each word
          */
         function convertToYenglihs() {
-            const words = document.getElementById('yenglihsInput').value.split(/\s+/);
-            const transformed = words.map(transformToYenglihs).join(' ');
+            const input = document.getElementById('yenglihsInput').value;
+            // Split into words and non-words (preserves punctuation, spaces, etc.)
+            const tokens = input.match(/[a-zA-Z]+|[^a-zA-Z]+/g) || [];
+            const transformed = tokens.map(token => 
+                /[a-zA-Z]/.test(token) ? transformToYenglihs(token) : token
+            ).join('');
             document.getElementById('yenglihsOutput').textContent = transformed;
         }
 
@@ -497,8 +501,11 @@
          * Converts input text to Old Yenglihs (ignores step 7 of modern rules)
          */
         function convertToOldYenglihs() {
-            const words = document.getElementById('oldInput').value.split(/\s+/);
-            const transformed = words.map(transformToOldYenglihs).join(' ');
+            const input = document.getElementById('oldInput').value;
+            const tokens = tokenizeInput(input);
+            const transformed = tokens.map(token => 
+                /[a-zA-Z]/.test(token) ? transformToOldYenglihs(token) : token
+            ).join('');
             document.getElementById('oldOutput').textContent = transformed;
         }
 
@@ -522,35 +529,90 @@
          * Reverts Yenglihs text back to English following reverse steps
          */
         function convertFromYenglihs() {
-            const words = document.getElementById('englishInput').value.split(/\s+/);
-            const reversed = words.map(reverseFromYenglihs).join(' ');
+            const input = document.getElementById('englishInput').value;
+            const tokens = tokenizeInput(input);
+            const reversed = tokens.map(token => 
+                /[a-zA-Z]/.test(token) ? reverseFromYenglihs(token) : token
+            ).join('');
             document.getElementById('englishOutput').textContent = reversed;
         }
 
         /**
          * Core reverse transformation logic
          */
-        function reverseFromYenglihs(word) {
-            if (![...word].some(isAlphabeticalLetter)) return word;
-            if (word.length === 1) return word;
-            if (word.length === 2) {
-                const core = word.endsWith('l') ? word.slice(0, -1) : word;
-                return core[1] + core[0]; // swap back
-            }
-            const lastChar = word.slice(-1);
-            let core = word.slice(0, -1);
-            // Remove inserted 'y' before final char if matches vowel rule
-            if (core.endsWith('y') && /[aeiou]/i.test(lastChar)) core = core.slice(0, -1);
-            // Remove trailing 'l' if added after vowel
-            if (core.endsWith('l') && /[aeiouy]/i.test(core.slice(-1))) core = core.slice(0, -1);
-            // Swap the last two letters back
-            core = core.slice(0, -2) + core.slice(-1) + core.slice(-2, -1);
-            // Remove prefixes 'la' or 'y'
-            if (core.startsWith('la')) core = core.slice(2);
-            else if (core.startsWith('y')) core = core.slice(1);
-            // Prepend the saved lastChar
-            return lastChar + core;
+function reverseFromYenglihs(word) {
+    // Return non-alphabetic tokens immediately
+    if (!/[a-zA-Z]/.test(word)) return word;
+    
+    const wasUpperCase = word === word.toUpperCase();
+    const wasCapitalized = /^[A-Z]/.test(word);
+    word = word.toLowerCase();
+    
+    let originalFirst = '';
+    let core = word;
+    
+    // Modern reversal: Extract appended characters
+    if (word.length > 2) {
+        // Extract appended letter (always last character)
+        originalFirst = core.slice(-1);
+        core = core.slice(0, -1);
+        
+        // Remove inserted 'y' if present
+        if (core.endsWith('y') && 
+            /[aeiou]/.test(originalFirst) === /[aeiou]/.test(core.slice(-1))) {
+            core = core.slice(0, -1);
         }
+    }
+    
+    // Remove trailing 'l' from vowels/y endings
+    if (core.endsWith('l') && core.length > 1 && 
+        /[aeiouy]/.test(core[core.length - 2])) {
+        core = core.slice(0, -1);
+    }
+    
+    // Swap last two letters back
+    if (core.length >= 2) {
+        core = core.slice(0, -2) + 
+               core.slice(-1) + 
+               core.slice(-2, -1);
+    }
+    
+    // Remove prefixes
+    if (core.startsWith('la') && core.length > 2) {
+        core = 'y' + core.slice(2);
+    } else if (core.startsWith('y') && core.length > 1) {
+        core = core.slice(1);
+    }
+    
+    // Restore original first letter
+    if (originalFirst) core = originalFirst + core;
+    
+    // Handle special cases for short words
+    if (core.length === 2) {
+        core = core[1] + core[0];
+        if (core.endsWith('l') && /[aeiou]/.test(core[0])) {
+            core = core.slice(0, -1);
+        }
+    }
+    
+    // Restore original casing
+    if (wasUpperCase) return core.toUpperCase();
+    if (wasCapitalized) {
+        return core.charAt(0).toUpperCase() + core.slice(1);
+    }
+    return core;
+}
+
+        // Case-preserving helper for two-letter words
+function restoreCase(original, transformed) {
+    if (original === original.toUpperCase()) {
+        return transformed.toUpperCase();
+    }
+    if (/^[A-Z]/.test(original)) {
+        return transformed.charAt(0).toUpperCase() + transformed.slice(1);
+    }
+    return transformed;
+}
 
         /**
          * Copies the text content of the given element ID to the clipboard
@@ -575,3 +637,26 @@
     </script>
 </body>
 </html>
+
+<!--  _____                    _____                    _____                    _____                    _____            _____                    _____                    _____          
+     |\    \                  /\    \                  /\    \                  /\    \                  /\    \          /\    \                  /\    \                  /\    \         
+     |:\____\                /::\    \                /::\____\                /::\    \                /::\____\        /::\    \                /::\____\                /::\    \        
+     |::|   |               /::::\    \              /::::|   |               /::::\    \              /:::/    /        \:::\    \              /:::/    /               /::::\    \       
+     |::|   |              /::::::\    \            /:::::|   |              /::::::\    \            /:::/    /          \:::\    \            /:::/    /               /::::::\    \      
+     |::|   |             /:::/\:::\    \          /::::::|   |             /:::/\:::\    \          /:::/    /            \:::\    \          /:::/    /               /:::/\:::\    \     
+     |::|   |            /:::/__\:::\    \        /:::/|::|   |            /:::/  \:::\    \        /:::/    /              \:::\    \        /:::/____/               /:::/__\:::\    \    
+     |::|   |           /::::\   \:::\    \      /:::/ |::|   |           /:::/    \:::\    \      /:::/    /               /::::\    \      /::::\    \               \:::\   \:::\    \   
+     |::|___|______    /::::::\   \:::\    \    /:::/  |::|   | _____    /:::/    / \:::\    \    /:::/    /       ____    /::::::\    \    /::::::\    \   _____    ___\:::\   \:::\    \  
+     /::::::::\    \  /:::/\:::\   \:::\    \  /:::/   |::|   |/\    \  /:::/    /   \:::\ ___\  /:::/    /       /\   \  /:::/\:::\    \  /:::/\:::\    \ /\    \  /\   \:::\   \:::\    \ 
+    /::::::::::\____\/:::/__\:::\   \:::\____\/:: /    |::|   /::\____\/:::/____/  ___\:::|    |/:::/____/       /::\   \/:::/  \:::\____\/:::/  \:::\    /::\____\/::\   \:::\   \:::\____\
+   /:::/~~~~/~~      \:::\   \:::\   \::/    /\::/    /|::|  /:::/    /\:::\    \ /\  /:::|____|\:::\    \       \:::\  /:::/    \::/    /\::/    \:::\  /:::/    /\:::\   \:::\   \::/    /
+  /:::/    /          \:::\   \:::\   \/____/  \/____/ |::| /:::/    /  \:::\    /::\ \::/    /  \:::\    \       \:::\/:::/    / \/____/  \/____/ \:::\/:::/    /  \:::\   \:::\   \/____/ 
+ /:::/    /            \:::\   \:::\    \              |::|/:::/    /    \:::\   \:::\ \/____/    \:::\    \       \::::::/    /                    \::::::/    /    \:::\   \:::\    \     
+/:::/    /              \:::\   \:::\____\             |::::::/    /      \:::\   \:::\____\       \:::\    \       \::::/____/                      \::::/    /      \:::\   \:::\____\    
+\::/    /                \:::\   \::/    /             |:::::/    /        \:::\  /:::/    /        \:::\    \       \:::\    \                      /:::/    /        \:::\  /:::/    /    
+ \/____/                  \:::\   \/____/              |::::/    /          \:::\/:::/    /          \:::\    \       \:::\    \                    /:::/    /          \:::\/:::/    /     
+                           \:::\    \                  /:::/    /            \::::::/    /            \:::\    \       \:::\    \                  /:::/    /            \::::::/    /      
+                            \:::\____\                /:::/    /              \::::/    /              \:::\____\       \:::\____\                /:::/    /              \::::/    /       
+                             \::/    /                \::/    /                \::/____/                \::/    /        \::/    /                \::/    /                \::/    /        
+                              \/____/                  \/____/                                           \/____/          \/____/                  \/____/                  \/____/         
+                                                                                                                                                                                             --/>
