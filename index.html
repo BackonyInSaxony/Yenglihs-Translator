@@ -458,6 +458,10 @@
             return /[a-zA-Z]/.test(char);
         }
 
+        function tokenizeInput(input) {
+            return input.match(/[a-zA-Z]+|[^a-zA-Z\s]+|\s+/g) || [];
+        } 
+        
         /**
          * Converts input text to Modern Yenglihs by splitting on whitespace and transforming each word
          */
