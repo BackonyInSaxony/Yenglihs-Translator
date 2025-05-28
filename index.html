@@ -5,133 +5,317 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yenglihs Translator</title>
     <style>
-        /* Basic page styling */
-        body {
-            font-family: Arial, sans-serif;
+        /* Modern color palette */
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #fca311;
+            --gray: #adb5bd;
+            --light-bg: #e9ecef;
+        }
+        
+        /* Base styles */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
             min-height: 100vh;
         }
         
-        /* Container for the translator UI */
         .container {
-            width: 90%;
-            max-width: 900px;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
         
-        /* Header section styling */
+        /* Header styling */
         .header {
-            background-color: #0077cc;
-            color: #fff;
-            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 20px;
             text-align: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 2rem;
+            position: relative;
+            overflow: hidden;
         }
         
-        /* Description panel styling */
-        .description {
-            background: #e9f5ff;
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .header::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            right: -30px;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        /* Card styling */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin: 20px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            background: var(--light-bg);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .card-body {
             padding: 20px;
-            border-left: 5px solid #0077cc;
         }
+        
+        /* Grid layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Description section */
+        .description {
+            background: white;
+            padding: 25px;
+        }
+        
         .description h2 {
+            color: var(--primary);
             margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-bg);
+            margin-bottom: 15px;
         }
+        
         .description ol {
-            margin: 10px 0;
-            padding-left: 20px;
+            padding-left: 25px;
+            margin: 15px 0;
+        }
+        
+        .description li {
+            margin-bottom: 10px;
+            padding-left: 5px;
+        }
+        
+        .description li::marker {
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .note {
+            background: rgba(252, 163, 17, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
         }
         
         /* Tab navigation styling */
         .tabs {
             display: flex;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid var(--light-bg);
+            background: white;
+            padding: 0 20px;
         }
+        
         .tab {
             flex: 1;
             text-align: center;
-            padding: 12px;
+            padding: 16px 10px;
             cursor: pointer;
-            transition: background 0.3s;
-        }
-        .tab.active {
-            background: #e9f5ff;
-            border-bottom: 4px solid #0077cc;
-            font-weight: bold;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--gray);
+            position: relative;
+            border-bottom: 3px solid transparent;
         }
         
-        /* Panel styling (hidden by default) */
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+        }
+        
+        .tab:hover:not(.active) {
+            color: var(--primary-dark);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        /* Panel styling */
         .panel {
             display: none;
-            padding: 20px;
+            padding: 25px;
+            animation: fadeIn 0.4s ease;
         }
+        
         .panel.active {
             display: block;
         }
         
-        /* Translator textarea styling */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Translator styling */
+        .translator {
+            background: white;
+        }
+        
         .translator textarea {
             width: 100%;
-            height: 120px;
-            padding: 12px;
-            margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            height: 150px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             resize: vertical;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: #fafafa;
         }
         
-        /* Button container styling */
+        .translator textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .translator textarea::placeholder {
+            color: #adb5bd;
+        }
+        
+        /* Button styling */
         .controls {
             display: flex;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-        .controls button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        /* Primary (action) button styling */
-        .btn-primary {
-            background: #0077cc;
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background: #005fa3;
-        }
-        /* Success (copy) button styling */
-        .btn-success {
-            background: #28a745;
-            color: #fff;
-        }
-        .btn-success:hover {
-            background: #218838;
+            gap: 15px;
+            margin-bottom: 15px;
         }
         
-        /* Output display styling */
+        .controls button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #3ab3d6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(76, 201, 240, 0.3);
+        }
+        
+        /* Output styling */
         .output {
-            padding: 16px;
-            background: #f7fafc;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            white-space: pre-wrap; /* Preserve whitespace and line breaks */
-            min-height: 60px;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            min-height: 100px;
+            font-size: 1.1rem;
+            line-height: 1.5;
+            overflow-y: auto;
+            max-height: 300px;
+            transition: all 0.3s;
+        }
+        
+        .output:empty::before {
+            content: "Your translation will appear here...";
+            color: #adb5bd;
+            font-style: italic;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background: var(--light-bg);
+            color: var(--gray);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
@@ -140,88 +324,120 @@
         <!-- Header with title -->
         <div class="header">
             <h1>Yenglihs Translator</h1>
+            <p>Transform English into Yenglihs and back again</p>
         </div>
 
-        <!-- Description of Yenglihs Rules -->
-        <div class="description">
-            <h2>What is Yenglihs</h2>
-            <p>Yenglihs is a "language" to transform words (With two modes, modern yenglihs and old yenglihs, old yenglihs simply ignores step 7). It's not a serious language, but rather a set of simple rules to modify text for my entertainment. It can take English (or other Latin-script words) and convert them into the best thing known to man. (Oh yeah, also, please note that the "English translator" doesn't work well and  brings out wrong stuff. So please put two and two together to realise what the word is supposed to be while I fix this! Thank you :)</p>
-
-            <h2>How Does Yenglihs Work?</h2>
-            <p>Rules for Yenglihs:</p>
-            <ol>
-                <li>Take any word and replace the first letter with "y" (e.g., Hello -> Yello).</li>
-                <li>If a word already begins with "y", add the prefix "la-" instead (e.g., Yellow -> Layellow).</li>
-                <li>Swap the last two letters of the word (e.g., Layellow -> Layellwo).</li>
-                <li>If a word has only two letters, swap them and add "l" if the word ends in a vowel (e.g., As -> Sal).</li>
-                <li>If a word has only one letter and is a vowel, add "l" (e.g., A -> Al).</li>
-                <li>Add "l" at the end of words ending in a vowel (e.g., Me -> Mel).</li>
-                <li>For words with at least three letters, append the first letter of the original word to the end of the transformed word. If both the appended letter and the last letter of the word are vowels or consonants, add "y" between them (e.g., Apple -> Ypplea -> Yppleya) </li>
-            </ol>
-            <p>These rules must be followed to transform words properly.</p>
-
-            <h2>How to Reverse Yenglihs?</h2>
-            <p>To reverse Yenglihs back to the original word, follow these steps in reverse:</p>
-            <ol>
-                <li>Remove the first letter (if it's "y") or the prefix "la-" (if present).</li>
-                <li>Undo the letter swap at the end of the word.</li>
-                <li>Remove the appended first letter from the end of the word (and remove any "y" inserted in step 7), and replace "y" (if it's the first letter) with the first letter from the end.</l[...]
-                <li>Restore the word to its original form.</li>
-                <li>If the word is two letters, swap the place of the first two letters and remove the "l" at the end.</li>
-                <li>If the word is one letter, remove the "l" if there's any.</li>
-            </ol>
-        </div>Rules omitted for brevity -->
-        </div>
-
-        <!-- Tab navigation for different modes -->
-        <div class="tabs">
-            <div class="tab active" data-target="oldYenglihsPanel">Old Yenglihs</div>
-            <div class="tab" data-target="toYenglihsPanel">Modern Yenglihs</div>
-            <div class="tab" data-target="toEnglishPanel">To English</div>
-        </div>
-
-        <!-- Old Yenglihs pane -->
-        <div id="oldYenglihsPanel" class="panel active">
-            <div class="translator">
-                <textarea id="oldInput" placeholder="Enter text for Old Yenglihs..."></textarea>
-                <div class="controls">
-                    <!-- Transform button -->
-                    <button class="btn-primary" onclick="convertToOldYenglihs()">Transform</button>
-                    <!-- Copy result button -->
-                    <button class="btn-success" onclick="copyText('oldOutput')">Copy</button>
+        <div class="grid-container">
+            <!-- Description section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>About Yenglihs</h2>
                 </div>
-                <!-- Display transformed text -->
-                <div id="oldOutput" class="output"></div>
+                <div class="card-body">
+                    <div class="description">
+                        <p>Yenglihs is a fun "language" to transform words with two modes: modern yenglihs and old yenglihs (which ignores step 7). It's not a serious language, but rather a set of simple rules to modify text for entertainment.</p>
+                        
+                        <div class="note">
+                            <strong>Note:</strong> The "English translator" may not work perfectly in all cases. Please use context to understand what the word is supposed to be.
+                        </div>
+                        
+                        <h2>How Does Yenglihs Work?</h2>
+                        <p>Rules for transforming to Yenglihs:</p>
+                        <ol>
+                            <li>Replace the first letter with "y" (e.g., Hello → Yello)</li>
+                            <li>If a word begins with "y", add prefix "la-" (e.g., Yellow → Layellow)</li>
+                            <li>Swap the last two letters (e.g., Layellow → Layellwo)</li>
+                            <li>For two-letter words: swap letters and add "l" if ends in vowel (e.g., As → Sal)</li>
+                            <li>For single-letter vowels: add "l" (e.g., A → Al)</li>
+                            <li>Add "l" at the end of words ending in a vowel (e.g., Me → Mel)</li>
+                            <li><strong>Modern only:</strong> Append original first letter with "y" if needed (e.g., Apple → Ypplea → Yppleya)</li>
+                        </ol>
+                        
+                        <h2>How to Reverse Yenglihs?</h2>
+                        <p>To reverse Yenglihs back to English:</p>
+                        <ol>
+                            <li>Remove "y" prefix or "la-" prefix</li>
+                            <li>Undo the last two letters swap</li>
+                            <li>Remove the appended first letter and any inserted "y"</li>
+                            <li>Restore the word to its original form</li>
+                            <li>For two-letter words: swap back and remove trailing "l"</li>
+                            <li>For single letters: remove trailing "l" if present</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Translator section -->
+            <div class="card">
+                <div class="card-header">
+                    <h2>Translator</h2>
+                </div>
+                <div class="card-body">
+                    <!-- Tab navigation for different modes -->
+                    <div class="tabs">
+                        <div class="tab active" data-target="oldYenglihsPanel">Old Yenglihs</div>
+                        <div class="tab" data-target="toYenglihsPanel">Modern Yenglihs</div>
+                        <div class="tab" data-target="toEnglishPanel">To English</div>
+                    </div>
+
+                    <!-- Old Yenglihs pane -->
+                    <div id="oldYenglihsPanel" class="panel active">
+                        <div class="translator">
+                            <textarea id="oldInput" placeholder="Enter text to convert to Old Yenglihs..."></textarea>
+                            <div class="controls">
+                                <button class="btn-primary" onclick="convertToOldYenglihs()">
+                                    <span>Transform</span>
+                                </button>
+                                <button class="btn-success" onclick="copyText('oldOutput')">
+                                    <span>Copy Result</span>
+                                </button>
+                            </div>
+                            <div id="oldOutput" class="output"></div>
+                        </div>
+                    </div>
+
+                    <!-- Modern Yenglihs pane -->
+                    <div id="toYenglihsPanel" class="panel">
+                        <div class="translator">
+                            <textarea id="yenglihsInput" placeholder="Enter text to convert to Modern Yenglihs..."></textarea>
+                            <div class="controls">
+                                <button class="btn-primary" onclick="convertToYenglihs()">
+                                    <span>Transform</span>
+                                </button>
+                                <button class="btn-success" onclick="copyText('yenglihsOutput')">
+                                    <span>Copy Result</span>
+                                </button>
+                            </div>
+                            <div id="yenglihsOutput" class="output"></div>
+                        </div>
+                    </div>
+
+                    <!-- Reversion to English pane -->
+                    <div id="toEnglishPanel" class="panel">
+                        <div class="translator">
+                            <textarea id="englishInput" placeholder="Enter Yenglihs text to revert to English..."></textarea>
+                            <div class="controls">
+                                <button class="btn-primary" onclick="convertFromYenglihs()">
+                                    <span>Revert</span>
+                                </button>
+                                <button class="btn-success" onclick="copyText('englishOutput')">
+                                    <span>Copy Result</span>
+                                </button>
+                            </div>
+                            <div id="englishOutput" class="output"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Modern Yenglihs pane -->
-        <div id="toYenglihsPanel" class="panel">
-            <div class="translator">
-                <textarea id="yenglihsInput" placeholder="Enter text for Modern Yenglihs..."></textarea>
-                <div class="controls">
-                    <button class="btn-primary" onclick="convertToYenglihs()">Transform</button>
-                    <button class="btn-success" onclick="copyText('yenglihsOutput')">Copy</button>
-                </div>
-                <div id="yenglihsOutput" class="output"></div>
-            </div>
-        </div>
-
-        <!-- Reversion to English pane -->
-        <div id="toEnglishPanel" class="panel">
-            <div class="translator">
-                <textarea id="englishInput" placeholder="Enter Yenglihs text to revert..."></textarea>
-                <div class="controls">
-                    <button class="btn-primary" onclick="convertFromYenglihs()">Revert</button>
-                    <button class="btn-success" onclick="copyText('englishOutput')">Copy</button>
-                </div>
-                <div id="englishOutput" class="output"></div>
-            </div>
+        <div class="footer">
+            <p>Yenglihs Translator v1.2 | Created with linguistic fun in mind</p>
         </div>
     </div>
 
     <script>
-        // Tab switching logic
+        // Tab switching logic (unchanged)
         document.querySelectorAll('.tab').forEach(tabElement => {
             tabElement.addEventListener('click', () => {
                 // Remove "active" class from all tabs and panels
@@ -341,7 +557,20 @@
          * @param {string} id - The ID of the element whose text to copy
          */
         function copyText(id) {
-            navigator.clipboard.writeText(document.getElementById(id).textContent);
+            const output = document.getElementById(id);
+            navigator.clipboard.writeText(output.textContent);
+            
+            // Visual feedback
+            const originalText = output.textContent;
+            output.textContent = "Copied to clipboard!";
+            output.style.backgroundColor = "#e8f5e9";
+            output.style.color = "#2e7d32";
+            
+            setTimeout(() => {
+                output.textContent = originalText;
+                output.style.backgroundColor = "";
+                output.style.color = "";
+            }, 1500);
         }
     </script>
 </body>
