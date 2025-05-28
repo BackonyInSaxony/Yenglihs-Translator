@@ -4,243 +4,330 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yenglihs Translator</title>
+    <!--
+        Styles for overall page layout, typography, and component appearance
+    -->
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
             color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background: #ffffff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 900px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
             overflow: hidden;
         }
         .header {
-            background-color: #0056b3;
-            color: white;
+            background-color: #0077cc;
+            color: #fff;
             padding: 20px;
             text-align: center;
         }
         .header h1 {
             margin: 0;
+            font-size: 2rem;
         }
-        .content {
+        .description {
+            background: #e9f5ff;
+            padding: 20px;
+            border-left: 5px solid #0077cc;
+        }
+        .description h2 {
+            margin-top: 0;
+        }
+        .description ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .tab.active {
+            background: #e9f5ff;
+            border-bottom: 4px solid #0077cc;
+            font-weight: bold;
+        }
+        .panel {
+            display: none;
             padding: 20px;
         }
-        .rules {
-            background: #e9f5ff;
-            padding: 15px;
-            border-left: 5px solid #0056b3;
-            margin-bottom: 20px;
-        }
-        .rules p {
-            margin: 0 0 10px;
-        }
-        .rules p:last-child {
-            margin: 0;
-        }
-        .translator {
-            margin-bottom: 20px;
+        .panel.active {
+            display: block;
         }
         .translator textarea {
             width: 100%;
-            height: 100px;
-            margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            height: 120px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
             resize: vertical;
         }
-        .translator button {
-            background-color: #0056b3;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-right: 10px;
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
         }
-        .translator button:hover {
-            background-color: #004494;
+        .controls button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-primary {
+            background: #0077cc;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #005fa3;
+        }
+        .btn-success {
+            background: #28a745;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #218838;
         }
         .output {
-            background: #f9f9f9;
-            padding: 15px;
+            padding: 16px;
+            background: #f7fafc;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
             white-space: pre-wrap;
-        }
-        .copy-button {
-            background-color: #28a745;
-        }
-        .copy-button:hover {
-            background-color: #218838;
+            min-height: 60px;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>Yenglihs Translator</h1>
+        </div>
 
-<div class="container">
-    <div class="header">
-        <h1>Yenglihs Translator</h1>
-    </div>
-    <div class="content">
-        <div class="rules">
-            <h2>What is Yenglihs?</h2>
-            <p>Yenglihs is a language to transform words. It's not a serious language, but rather a set of simple rules to modify text for entertainment. It can take English (or other Latin-script words) and convert them into the best thing known to man. (Oh yeah, also, please note that the "English translator" doesn't work well and  brings out wrong stuff. So please put two and two together to realise what's the word supposed to be while I fix this! Thank you)</p>
-
-            <h2>How Does Yenglihs Work?</h2>
-            <p>Rules for Yenglihs:</p>
+        <!-- Description of Yenglihs Rules -->
+        <div class="description">
+            <h2>About Yenglihs</h2>
+            <p>
+                Yenglihs modifies words with playful rules for entertainment. Input English (or any Latin-based) text, and watch it transform!
+            </p>
+            <h2>Yenglihs Transformation Rules</h2>
             <ol>
-                <li>Take any word and replace the first letter with "y" (e.g., Hello -> Yello).</li>
-                <li>If a word already begins with "y", add the prefix "la-" instead (e.g., Yellow -> Layellow).</li>
-                <li>Swap the last two letters of the word (e.g., Layellow -> Layellwo).</li>
-                <li>If a word has only two letters, swap them and add "l" if the word ends in a vowel (e.g., As -> Sal).</li>
-                <li>If a word has only one letter and is a vowel, add "l" (e.g., A -> Al).</li>
-                <li>Add "l" at the end of words ending in a vowel (e.g., Me -> Mel).</li>
-                <li>For words with at least three letters, append the first letter of the original word to the end of the transformed word. If both the appended letter and the last letter of the word are vowels or consonants, add "y" between them (e.g., Apple -> Ypplea -> Yppleya) </li>
+                <li>Replace first character with <code>y</code>, unless it already starts with <code>y</code>.</li>
+                <li>If word starts with <code>y</code>, prefix with <code>la-</code>.</li>
+                <li>Swap the final two letters of the word.</li>
+                <li>For 2-letter words, swap the letters and append <code>l</code> if it ends in a vowel.</li>
+                <li>For 1-letter vowels, append <code>l</code>.</li>
+                <li>Append <code>l</code> to words ending in a vowel.</li>
+                <li>For words &ge;3 letters, append original first letter; if both it and the last letter are same type (vowel/consonant), insert <code>y</code> between.</li>
             </ol>
-            <p>These rules must be followed in order to properly transform words.</p>
-
-            <h2>How to Reverse Yenglihs?</h2>
-            <p>To reverse Yenglihs back to the original word, follow these steps in reverse:</p>
+            <h2>Reversing Yenglihs</h2>
             <ol>
-                <li>Remove the first letter (if it's "y") or the prefix "la-" (if present).</li>
-                <li>Undo the letter swap at the end of the word.</li>
-                <li>Remove the appended first letter from the end of the word (and remove any "y" inserted in step 7), and replace "y" (if it's the first letter) with the first letter from the end.</l[...]
-                <li>Restore the word to its original form.</li>
-                <li>If the word is two letters, swap the place of the first two letters and remove the "l" at the end.</li>
-                <li>If the word is one letter, remove the "l" if there's any.</li>
+                <li>Remove leading <code>y</code> or <code>la-</code> prefix.</li>
+                <li>Swap last two letters back.</li>
+                <li>Remove appended first letter (and any inserted <code>y</code>).</li>
+                <li>Undo vowel <code>l</code> additions for 1- or 2-letter words.</li>
             </ol>
-            
         </div>
 
-        <div class="translator">
-            <textarea id="inputText" placeholder="Type your sentence here..."></textarea>
-            <button onclick="translateToYenglihs()">Translate to Yenglihs</button>
-            <button onclick="translateToEnglish()">Translate to English</button>
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <div class="tab active" data-target="toYenglihsPanel">To Yenglihs</div>
+            <div class="tab" data-target="toEnglishPanel">To English</div>
         </div>
 
-        <div style="display: flex; align-items: center;">
-            <div class="output" id="outputText" style="flex-grow: 1;"></div>
-            <button class="copy-button" onclick="copyToClipboard()">Copy to Clipboard</button>
+        <!-- Transformation Panel -->
+        <div id="toYenglihsPanel" class="panel active">
+            <div class="translator">
+                <!-- User input for Yenglihs conversion -->
+                <textarea id="yenglihsInput" placeholder="Enter text to transform..."></textarea>
+                <div class="controls">
+                    <button class="btn-primary" onclick="convertToYenglihs()">Transform</button>
+                    <button class="btn-success" onclick="copyText('yenglihsOutput')">Copy</button>
+                </div>
+                <!-- Display transformed text -->
+                <div id="yenglihsOutput" class="output"></div>
+            </div>
+        </div>
+
+        <!-- Reverse Panel -->
+        <div id="toEnglishPanel" class="panel">
+            <div class="translator">
+                <!-- User input for reversing Yenglihs -->
+                <textarea id="englishInput" placeholder="Enter Yenglihs text to revert..."></textarea>
+                <div class="controls">
+                    <button class="btn-primary" onclick="convertFromYenglihs()">Revert</button>
+                    <button class="btn-success" onclick="copyText('englishOutput')">Copy</button>
+                </div>
+                <!-- Display reverted text -->
+                <div id="englishOutput" class="output"></div>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-    function isLetter(char) {
-        return char.toLowerCase() !== char.toUpperCase();
-    }
+    <!-- Script Section: Logic for tabs and transformations -->
+    <script>
+        /**
+         * Toggle between "To Yenglihs" and "To English" panels
+         */
+        document.querySelectorAll('.tab').forEach(tabElement => {
+            tabElement.addEventListener('click', () => {
+                // Deactivate all tabs and panels
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
 
-    function translateToYenglihs() {
-        const text = document.getElementById('inputText').value;
-        const words = text.split(' ');
-        const translated = words.map(word => {
-            if (!word.split('').some(isLetter)) {
-                // Return symbols and punctuation as is
-                return word;
-            }
+                // Activate clicked tab and corresponding panel
+                tabElement.classList.add('active');
+                document.getElementById(tabElement.dataset.target).classList.add('active');
+            });
+        });
 
-            let transformed = '';
+        /**
+         * Check if a character is an English letter
+         * @param {string} char - Single character to test
+         * @returns {boolean}
+         */
+        function isAlphabeticalLetter(char) {
+            return /[a-zA-Z]/.test(char);
+        }
 
+        /**
+         * Convert entire input text to Yenglihs
+         */
+        function convertToYenglihs() {
+            const inputText = document.getElementById('yenglihsInput').value;
+            const wordsArray = inputText.split(/\s+/);
+            const transformedWords = wordsArray.map(transformToYenglihs);
+            document.getElementById('yenglihsOutput').textContent = transformedWords.join(' ');
+        }
+
+        /**
+         * Apply Yenglihs transformation rules to a single word
+         * @param {string} word
+         * @returns {string}
+         */
+        function transformToYenglihs(word) {
+            // If no alphabetical characters, return unchanged
+            if (![...word].some(isAlphabeticalLetter)) return word;
+
+            // Handle single-character words
             if (word.length === 1) {
-                // Handle one-letter words
-                transformed = 'aeiou'.includes(word.toLowerCase()) ? word + 'l' : word;
-            } else if (word.length === 2) {
-                // Handle two-letter words
-                const swapped = word[1] + word[0];
-                transformed = 'aeiou'.includes(swapped[1].toLowerCase()) ? swapped + 'l' : swapped;
-            } else {
-                // Replace the first letter with "y" or add "la-" if it starts with "y"
-                if (word[0].toLowerCase() !== 'y') {
-                    transformed = 'y' + word.slice(1);
-                } else {
-                    transformed = 'la' + word;
-                }
-
-                // Swap the last two letters
-                const len = transformed.length;
-                transformed = transformed.slice(0, len - 2) + transformed[len - 1] + transformed[len - 2];
-
-                // Add "l" if the word ends with a vowel
-                if ('aeiouy'.includes(transformed[transformed.length - 1].toLowerCase())) {
-                    transformed += 'l';
-                }
-
-                // Append the first letter of the original word to the end, with "y" if needed
-                const firstOriginal = word[0].toLowerCase();
-                if ('aeiou'.includes(firstOriginal) === 'aeiou'.includes(transformed[transformed.length - 1].toLowerCase())) {
-                    transformed += 'y';
-                }
-                transformed += firstOriginal;
+                return /[aeiou]/i.test(word) ? word + 'l' : word;
             }
+
+            // Handle two-character words
+            if (word.length === 2) {
+                const swapped = word[1] + word[0];
+                return /[aeiou]/i.test(swapped[1]) ? swapped + 'l' : swapped;
+            }
+
+            // Main transformation for words with 3+ letters
+            // Step 1: Prefix with 'y' or 'la'
+            let transformed = word[0].toLowerCase() !== 'y'
+                ? 'y' + word.slice(1)
+                : 'la' + word;
+
+            // Step 2: Swap the last two letters
+            transformed = transformed.slice(0, -2)
+                + transformed.slice(-1)
+                + transformed.slice(-2, -1);
+
+            // Step 3: Append 'l' if ending in a vowel-like character
+            if (/[aeiouy]/i.test(transformed.slice(-1))) {
+                transformed += 'l';
+            }
+
+            // Step 4: Append original first letter, with optional 'y' separator
+            const originalFirst = word[0].toLowerCase();
+            const sameType = /[aeiou]/i.test(originalFirst) === /[aeiou]/i.test(transformed.slice(-1));
+            transformed += sameType ? 'y' + originalFirst : originalFirst;
 
             return transformed;
-        });
-        document.getElementById('outputText').textContent = translated.join(' ');
-    }
+        }
 
-    function translateToEnglish() {
-        const text = document.getElementById('inputText').value;
-        const words = text.split(' ');
-        const translated = words.map(word => {
-            if (!word.split('').some(isLetter)) {
-                // Return symbols and punctuation as is
-                return word;
+        /**
+         * Reverse Yenglihs text back to original English
+         */
+        function convertFromYenglihs() {
+            const inputText = document.getElementById('englishInput').value;
+            const wordsArray = inputText.split(/\s+/);
+            const reversedWords = wordsArray.map(reverseFromYenglihs);
+            document.getElementById('englishOutput').textContent = reversedWords.join(' ');
+        }
+
+        /**
+         * Reverse transformation for a single Yenglihs word
+         * @param {string} word
+         * @returns {string}
+         */
+        function reverseFromYenglihs(word) {
+            // If no alphabetical characters, return unchanged
+            if (![...word].some(isAlphabeticalLetter)) return word;
+
+            // Short-circuit for very short words
+            if (word.length === 1) return word;
+            if (word.length === 2) {
+                const core = word.endsWith('l') ? word.slice(0, -1) : word;
+                return core[1] + core[0];
             }
 
-            let originalWord = word;
+            // Extract last original first-letter for reattachment
+            const lastChar = word.slice(-1);
+            let core = word.slice(0, -1);
 
-            if (originalWord.length === 1) {
-                // Handle one-letter words
-                return originalWord.endsWith('l') ? originalWord.slice(0, -1) : originalWord;
+            // Remove inserted 'y' if it preceded a vowel suffix
+            if (core.endsWith('y') && /[aeiou]/i.test(lastChar)) {
+                core = core.slice(0, -1);
             }
 
-            if (originalWord.length === 2) {
-                // Handle two-letter words
-                return originalWord.endsWith('l') ? originalWord.slice(0, -1).split('').reverse().join('') : originalWord.split('').reverse().join('');
+            // Remove the vowel-ending 'l' marker
+            if (core.endsWith('l') && /[aeiouy]/i.test(core.slice(-1))) {
+                core = core.slice(0, -1);
             }
 
-            // Remove appended first letter and the intermediate "y" if present
-            const lastChar = originalWord.slice(-1).toLowerCase();
-            originalWord = originalWord.slice(0, -1);
-            if (originalWord.endsWith('y') && 'aeiou'.includes(lastChar)) {
-                originalWord = originalWord.slice(0, -1);
+            // Swap final two letters back
+            core = core.slice(0, -2) + core.slice(-1) + core.slice(-2, -1);
+
+            // Remove the 'la' prefix or leading 'y'
+            if (core.startsWith('la')) {
+                core = core.slice(2);
+            } else if (core.startsWith('y')) {
+                core = core.slice(1);
             }
 
-            // Undo the letter swap at the end
-            const len = originalWord.length;
-            originalWord = originalWord.slice(0, len - 2) + originalWord[len - 1] + originalWord[len - 2];
+            // Prepend the original first letter
+            return lastChar + core;
+        }
 
-            // Remove prefix "la-" or leading "y"
-            if (originalWord.startsWith("la")) {
-                originalWord = originalWord.slice(2);
-            } else if (originalWord.startsWith("y")) {
-                originalWord = originalWord.slice(1);
-            }
-
-            return lastChar + originalWord;
-        });
-
-        document.getElementById('outputText').textContent = translated.join(' ');
-    }
-
-    function copyToClipboard() {
-        const outputText = document.getElementById('outputText').textContent;
-        navigator.clipboard.writeText(outputText).then(() => {
-            alert('Copied to clipboard!');
-        }).catch(err => {
-            console.error('Failed to copy text: ', err);
-        });
-    }
-</script>
-
+        /**
+         * Copy text content of an element to clipboard
+         * @param {string} elementId
+         */
+        function copyText(elementId) {
+            const textContent = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(textContent);
+        }
+    </script>
 </body>
 </html>
