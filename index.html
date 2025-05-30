@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- Hey, what are you doing here, hm? Get your head out of here before I slap you out, hehe! -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -303,33 +302,47 @@
             font-size: 0.9rem;
             border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
-        
-        /* Responsive adjustments */
+
+        /* Copy message styling */
+        #copyMessage {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #4CAF50; /* Green */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         @media (max-width: 768px) {
-            .tabs {
-                flex-direction: column;
-            }
-            
-            .controls {
-                flex-direction: column;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
+            #copyMessage {
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 10px;
+                right: auto;
+                width: calc(100% - 40px);
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header with title -->
         <div class="header">
             <h1>Yenglihs Translator</h1>
             <p>The best thing known to man!</p>
         </div>
 
         <div class="grid-container">
-            <!-- Description section -->
             <div class="card">
                 <div class="card-header">
                     <h2>About Yenglihs</h2>
@@ -350,38 +363,34 @@
                             <li>Swap the last two letters (e.g., Layellow → Layellwo)</li>
                             <li>For two-letter words: swap letters and add "l" if ends in vowel (e.g., As → Sal)</li>
                             <li>For single-letter vowels: add "l" (e.g., A → Al)</li>
-                            <li>Add "l" at the end of words ending in a vowel (e.g., Me → Mel)</li>
-                            <li><strong>Modern only:</strong> Append original first letter with "y" if needed (e.g., Apple → Ypplea → Yppleya)</li>
+                            <li>Add "l" at the end of words ending in a vowel (or 'y') (e.g., Me → Mel)</li>
+                            <li><strong>Modern only:</strong> Append original first letter. If the appended original first letter and the character it's appended to are of the same vowel/consonant type, insert "y" between them. (e.g., Apple → Yppleya)</li>
                         </ol>
                         
                         <h2>How to Reverse Yenglihs?</h2>
-                        <p>To reverse Yenglihs back to English:</p>
+                        <p>To reverse Yenglihs back to English (best effort, as some information is lost):</p>
                         <ol>
-                            <li>Remove "y" prefix or "la-" prefix</li>
-                            <li>Undo the last two letters swap</li>
-                            <li>Remove the appended first letter and any inserted "y"</li>
-                            <li>Restore the word to its original form</li>
-                            <li>For two-letter words: swap back and remove trailing "l"</li>
-                            <li>For single letters: remove trailing "l" if present</li>
+                            <li>Attempt to remove the appended original first letter and any inserted "y" (Modern only).</li>
+                            <li>Remove any trailing "l" that was added.</li>
+                            <li>Undo the swap of the last two letters.</li>
+                            <li>Remove "y" or "la-" prefixes and restore the original first letter if possible.</li>
+                            <li>Handle two-letter and single-letter words as special cases.</li>
                         </ol>
                     </div>
                 </div>
             </div>
             
-            <!-- Translator section -->
             <div class="card">
                 <div class="card-header">
                     <h2>Translator</h2>
                 </div>
                 <div class="card-body">
-                    <!-- Tab navigation for different modes -->
                     <div class="tabs">
                         <div class="tab active" data-target="oldYenglihsPanel">Old Yenglihs</div>
                         <div class="tab" data-target="toYenglihsPanel">Modern Yenglihs</div>
                         <div class="tab" data-target="toEnglishPanel">To English</div>
                     </div>
 
-                    <!-- Old Yenglihs pane -->
                     <div id="oldYenglihsPanel" class="panel active">
                         <div class="translator">
                             <textarea id="oldInput" placeholder="Enter text to convert to Old Yenglihs..."></textarea>
@@ -397,7 +406,6 @@
                         </div>
                     </div>
 
-                    <!-- Modern Yenglihs pane -->
                     <div id="toYenglihsPanel" class="panel">
                         <div class="translator">
                             <textarea id="yenglihsInput" placeholder="Enter text to convert to Modern Yenglihs..."></textarea>
@@ -413,7 +421,6 @@
                         </div>
                     </div>
 
-                    <!-- Reversion to English pane -->
                     <div id="toEnglishPanel" class="panel">
                         <div class="translator">
                             <textarea id="englishInput" placeholder="Enter Yenglihs text to revert to English..."></textarea>
@@ -433,12 +440,14 @@
         </div>
 
         <div class="footer">
-            <p>Yenglihs Translator v1.2 | Backony's Stuff</p>
+            <p>Yenglihs Translator v1.3 | Backony's Stuff</p>
         </div>
     </div>
 
+    <div id="copyMessage">Text copied to clipboard!</div>
+
     <script>
-        // Tab switching logic
+        // --- Tab Switching Logic ---
         document.querySelectorAll('.tab').forEach(tabElement => {
             tabElement.addEventListener('click', () => {
                 // Remove "active" class from all tabs and panels
@@ -450,6 +459,8 @@
             });
         });
 
+        // --- Helper Functions ---
+
         /**
          * Checks if a character is an alphabetical letter (A-Z, case-insensitive)
          * @param {string} char - Single character to test
@@ -459,201 +470,313 @@
             return /[a-zA-Z]/.test(char);
         }
 
+        /**
+         * Tokenizes the input string into words, spaces, and punctuation.
+         * This ensures non-alphabetic characters are preserved and not transformed.
+         * @param {string} input - The raw input string.
+         * @returns {Array<string>} An array of tokens.
+         */
         function tokenizeInput(input) {
             return input.match(/[a-zA-Z]+|[^a-zA-Z\s]+|\s+/g) || [];
-        } 
+        }
         
         /**
-         * Converts input text to Modern Yenglihs by splitting on whitespace and transforming each word
+         * Restores the original casing (uppercase, capitalized, or lowercase) to a transformed word.
+         * @param {string} originalWord - The word in its original casing before transformation.
+         * @param {string} transformedWord - The word after transformation (typically lowercase).
+         * @returns {string} The transformed word with its original casing restored.
+         */
+        function restoreCase(originalWord, transformedWord) {
+            if (originalWord === originalWord.toUpperCase()) {
+                return transformedWord.toUpperCase();
+            }
+            if (originalWord.length > 0 && originalWord.charAt(0) === originalWord.charAt(0).toUpperCase()) {
+                return transformedWord.charAt(0).toUpperCase() + transformedWord.slice(1);
+            }
+            return transformedWord;
+        }
+
+        // --- Yenglihs Transformation Functions ---
+
+        /**
+         * Converts input text to Modern Yenglihs.
+         * Splits the input into tokens and applies transformation rules to each alphabetical word.
          */
         function convertToYenglihs() {
             const input = document.getElementById('yenglihsInput').value;
-            // Split into words and non-words (preserves punctuation, spaces, etc.)
-            const tokens = input.match(/[a-zA-Z]+|[^a-zA-Z]+/g) || [];
+            const tokens = tokenizeInput(input);
             const transformed = tokens.map(token => 
-                /[a-zA-Z]/.test(token) ? transformToYenglihs(token) : token
+                isAlphabeticalLetter(token[0]) ? transformToYenglihs(token) : token
             ).join('');
             document.getElementById('yenglihsOutput').textContent = transformed;
         }
 
         /**
-         * Core transformation function for Modern Yenglihs mode
+         * Core transformation logic for Modern Yenglihs mode.
+         * Applies rules 1-7 sequentially.
+         * @param {string} word - The word to transform.
+         * @returns {string} The transformed word.
          */
         function transformToYenglihs(word) {
-            // Return non-alphabetic tokens unchanged
-            if (![...word].some(isAlphabeticalLetter)) return word;
-            // Single-letter words: append 'l' if vowel
-            if (word.length === 1) return /[aeiou]/i.test(word) ? word + 'l' : word;
-            // Two-letter words: swap and append 'l' if new last is vowel
+            const originalWord = word; // Store original for case restoration
+            word = word.toLowerCase(); // Process in lowercase
+
+            // Rule 5: For single-letter vowels: add "l"
+            if (word.length === 1) {
+                return /[aeiou]/.test(word) ? restoreCase(originalWord, word + 'l') : originalWord;
+            }
+
+            // Rule 4: For two-letter words: swap letters and add "l" if ends in vowel
             if (word.length === 2) {
                 const swapped = word[1] + word[0];
-                return /[aeiou]/i.test(swapped[1]) ? swapped + 'l' : swapped;
+                const final = /[aeiou]/.test(swapped[1]) ? swapped + 'l' : swapped;
+                return restoreCase(originalWord, final);
             }
-            // For longer words: prefix with 'y' or 'la-'
-            let transformed = word[0].toLowerCase() !== 'y' ? 'y' + word.slice(1) : 'la' + word;
-            // Swap last two letters
-            transformed = transformed.slice(0, -2) + transformed.slice(-1) + transformed.slice(-2, -1);
-            // Append 'l' if last char is a vowel or 'y'
-            if (/[aeiouy]/i.test(transformed.slice(-1))) transformed += 'l';
-            // Append original first letter (with 'y' in between if same type)
-            const originalFirst = word[0].toLowerCase();
-            const sameType = /[aeiou]/i.test(originalFirst) === /[aeiou]/i.test(transformed.slice(-1));
-            transformed += sameType ? 'y' + originalFirst : originalFirst;
-            return transformed;
+
+            // For longer words (length > 2)
+            let transformed = '';
+
+            // Rule 1: Replace the first letter with "y"
+            // Rule 2: If a word begins with "y", add prefix "la-"
+            if (word.startsWith('y')) {
+                transformed = 'la' + word;
+            } else {
+                transformed = 'y' + word.slice(1);
+            }
+
+            // Rule 3: Swap the last two letters
+            if (transformed.length >= 2) {
+                transformed = transformed.slice(0, -2) + transformed.slice(-1) + transformed.slice(-2, -1);
+            }
+
+            // Rule 6: Add "l" at the end of words ending in a vowel (or 'y')
+            if (transformed.length > 0 && /[aeiouy]/.test(transformed.slice(-1))) {
+                transformed += 'l';
+            }
+
+            // Rule 7 (Modern only): Append original first letter with "y" if needed
+            // Interpretation: Append original first letter. If the appended original first letter
+            // and the character it's appended to are of the same vowel/consonant type,
+            // insert 'y' between them.
+            const currentLastChar = transformed.slice(-1);
+            const originalFirstCharLower = originalWord[0].toLowerCase();
+            const isOriginalFirstVowel = /[aeiou]/.test(originalFirstCharLower);
+            const isCurrentLastVowel = /[aeiou]/.test(currentLastChar);
+
+            if (isOriginalFirstVowel === isCurrentLastVowel) {
+                transformed += 'y' + originalFirstCharLower;
+            } else {
+                transformed += originalFirstCharLower;
+            }
+
+            return restoreCase(originalWord, transformed);
         }
 
         /**
-         * Converts input text to Old Yenglihs (ignores step 7 of modern rules)
+         * Converts input text to Old Yenglihs.
+         * Applies rules 1-6 only (ignores Rule 7).
          */
         function convertToOldYenglihs() {
             const input = document.getElementById('oldInput').value;
             const tokens = tokenizeInput(input);
             const transformed = tokens.map(token => 
-                /[a-zA-Z]/.test(token) ? transformToOldYenglihs(token) : token
+                isAlphabeticalLetter(token[0]) ? transformToOldYenglihs(token) : token
             ).join('');
             document.getElementById('oldOutput').textContent = transformed;
         }
 
         /**
-         * Core transformation for Old Yenglihs mode
+         * Core transformation logic for Old Yenglihs mode.
+         * Applies rules 1-6 only.
+         * @param {string} word - The word to transform.
+         * @returns {string} The transformed word.
          */
         function transformToOldYenglihs(word) {
-            if (![...word].some(isAlphabeticalLetter)) return word;
-            if (word.length === 1) return /[aeiou]/i.test(word) ? word + 'l' : word;
+            const originalWord = word;
+            word = word.toLowerCase();
+
+            // Rule 5: For single-letter vowels: add "l"
+            if (word.length === 1) {
+                return /[aeiou]/.test(word) ? restoreCase(originalWord, word + 'l') : originalWord;
+            }
+
+            // Rule 4: For two-letter words: swap letters and add "l" if ends in vowel
             if (word.length === 2) {
                 const swapped = word[1] + word[0];
-                return /[aeiou]/i.test(swapped[1]) ? swapped + 'l' : swapped;
+                const final = /[aeiou]/.test(swapped[1]) ? swapped + 'l' : swapped;
+                return restoreCase(originalWord, final);
             }
-            let transformed = word[0].toLowerCase() !== 'y' ? 'y' + word.slice(1) : 'la' + word;
-            transformed = transformed.slice(0, -2) + transformed.slice(-1) + transformed.slice(-2, -1);
-            if (/[aeiouy]/i.test(transformed.slice(-1))) transformed += 'l';
-            return transformed;
+
+            // For longer words (length > 2)
+            let transformed = '';
+
+            // Rule 1 & 2: Prefixing
+            if (word.startsWith('y')) {
+                transformed = 'la' + word;
+            } else {
+                transformed = 'y' + word.slice(1);
+            }
+
+            // Rule 3: Swap the last two letters
+            if (transformed.length >= 2) {
+                transformed = transformed.slice(0, -2) + transformed.slice(-1) + transformed.slice(-2, -1);
+            }
+
+            // Rule 6: Add "l" at the end of words ending in a vowel (or 'y')
+            if (transformed.length > 0 && /[aeiouy]/.test(transformed.slice(-1))) {
+                transformed += 'l';
+            }
+
+            // Old Yenglihs ignores Rule 7.
+
+            return restoreCase(originalWord, transformed);
         }
 
+        // --- Yenglihs to English Reversal Function ---
+
         /**
-         * Reverts Yenglihs text back to English following reverse steps
+         * Reverts Yenglihs text back to English following reverse steps.
+         * This function attempts to reverse the Modern Yenglihs rules.
+         * Due to information loss in the forward transformation, perfect reversal is not always possible.
          */
         function convertFromYenglihs() {
             const input = document.getElementById('englishInput').value;
             const tokens = tokenizeInput(input);
             const reversed = tokens.map(token => 
-                /[a-zA-Z]/.test(token) ? reverseFromYenglihs(token) : token
+                isAlphabeticalLetter(token[0]) ? reverseFromYenglihs(token) : token
             ).join('');
             document.getElementById('englishOutput').textContent = reversed;
         }
 
         /**
-         * Core reverse transformation logic
+         * Core reversal logic for Yenglihs to English.
+         * Reverses the transformation rules in the opposite order of application.
+         * @param {string} word - The Yenglihs word to revert.
+         * @returns {string} The best-effort reversed English word.
          */
-function reverseFromYenglihs(word) {
-    // Return non-alphabetic tokens immediately
-    if (!/[a-zA-Z]/.test(word)) return word;
-    
-    const wasUpperCase = word === word.toUpperCase();
-    const wasCapitalized = /^[A-Z]/.test(word);
-    word = word.toLowerCase();
-    
-    let originalFirst = '';
-    let core = word;
-    
-    // Modern reversal: Extract appended characters
-    if (word.length > 2) {
-        // Extract appended letter (always last character)
-        originalFirst = core.slice(-1);
-        core = core.slice(0, -1);
-        
-        // Remove inserted 'y' if present
-        if (core.endsWith('y') && 
-            /[aeiou]/.test(originalFirst) === /[aeiou]/.test(core.slice(-1))) {
-            core = core.slice(0, -1);
-        }
-    }
-    
-    // Remove trailing 'l' from vowels/y endings
-    if (core.endsWith('l') && core.length > 1 && 
-        /[aeiouy]/.test(core[core.length - 2])) {
-        core = core.slice(0, -1);
-    }
-    
-    // Swap last two letters back
-    if (core.length >= 2) {
-        core = core.slice(0, -2) + 
-               core.slice(-1) + 
-               core.slice(-2, -1);
-    }
-    
-    // Remove prefixes
-    if (core.startsWith('la') && core.length > 2) {
-        core = 'y' + core.slice(2);
-    } else if (core.startsWith('y') && core.length > 1) {
-        core = core.slice(1);
-    }
-    
-    // Restore original first letter
-    if (originalFirst) core = originalFirst + core;
-    
-    // Handle special cases for short words
-    if (core.length === 2) {
-        core = core[1] + core[0];
-        if (core.endsWith('l') && /[aeiou]/.test(core[0])) {
-            core = core.slice(0, -1);
-        }
-    }
-    
-    // Restore original casing
-    if (wasUpperCase) return core.toUpperCase();
-    if (wasCapitalized) {
-        return core.charAt(0).toUpperCase() + core.slice(1);
-    }
-    return core;
-}
+        function reverseFromYenglihs(word) {
+            if (!isAlphabeticalLetter(word[0])) return word;
 
-        // Case-preserving helper for two-letter words
-function restoreCase(original, transformed) {
-    if (original === original.toUpperCase()) {
-        return transformed.toUpperCase();
-    }
-    if (/^[A-Z]/.test(original)) {
-        return transformed.charAt(0).toUpperCase() + transformed.slice(1);
-    }
-    return transformed;
-}
+            const originalInputWord = word; // Store for case restoration
+            word = word.toLowerCase();
+
+            let processedWord = word;
+            let originalFirstCharGuess = ''; // Stores the original first letter if recovered from Rule 7 reversal
+            let wasLaPrefixed = false; // Flag to track if 'la' prefix was removed
+
+            // --- Special handling for single-letter and two-letter words (reverse Rule 5 & 4) ---
+            // These rules apply to short words and have distinct reversal logic.
+            
+            // Reverse Rule 5: 'Al' -> 'A' (for single-letter vowels)
+            if (processedWord.length === 2 && processedWord.endsWith('l') && /[aeiou]/.test(processedWord[0])) {
+                return restoreCase(originalInputWord, processedWord[0]);
+            }
+            // Reverse Rule 4: 'Sal' -> 'As' (for two-letter words)
+            if (processedWord.length === 3 && processedWord.endsWith('l') && /[aeiou]/.test(processedWord[1])) {
+                const temp = processedWord.slice(0, -1); // remove 'l'
+                const reversed = temp[1] + temp[0]; // swap
+                return restoreCase(originalInputWord, reversed);
+            }
+            // If it's a single letter word that wasn't a vowel (e.g., 'B' -> 'B'), it remains unchanged.
+            // If it's a 2-letter word that was just swapped (e.g., 'By' -> 'Yb'), it will be handled by the general logic
+            // or if it's not a candidate for Rule 4/5 reversal.
+            if (processedWord.length === 1) {
+                return restoreCase(originalInputWord, processedWord);
+            }
+            
+            // --- For words longer than 2 characters (main reversal logic) ---
+
+            // 1. Reverse Rule 7 (Modern only): Remove appended original first letter and 'y' if present
+            // This attempts to extract the original first letter that was appended by Rule 7.
+            if (processedWord.length >= 2) {
+                const potentialOriginalFirst = processedWord.slice(-1);
+                const charBeforePotentialOriginal = processedWord.slice(-2, -1);
+
+                const isPotentialOriginalFirstVowel = /[aeiou]/.test(potentialOriginalFirst);
+                const isCharBeforePotentialOriginalVowel = /[aeiou]/.test(charBeforePotentialOriginal);
+
+                // Check if the last two characters match the Rule 7 pattern for 'y' insertion
+                if (charBeforePotentialOriginal === 'y' && isPotentialOriginalFirstVowel === isCharBeforePotentialOriginalVowel) {
+                    originalFirstCharGuess = potentialOriginalFirst;
+                    processedWord = processedWord.slice(0, -2); // Remove 'y' and the appended letter
+                } else if (isAlphabeticalLetter(potentialOriginalFirst)) { // If it's just an appended letter without 'y'
+                    originalFirstCharGuess = potentialOriginalFirst;
+                    processedWord = processedWord.slice(0, -1); // Remove only the appended letter
+                }
+            }
+
+            // 2. Reverse Rule 6: Remove 'l' if it was appended
+            // Rule 6 adds 'l' if the word ends in a vowel (or 'y').
+            if (processedWord.length >= 2 && processedWord.endsWith('l') && /[aeiouy]/.test(processedWord[processedWord.length - 2])) {
+                processedWord = processedWord.slice(0, -1); // Remove the trailing 'l'
+            }
+
+            // 3. Reverse Rule 3: Swap last two letters back
+            // This reverses the swap performed by Rule 3.
+            if (processedWord.length >= 2) {
+                processedWord = processedWord.slice(0, -2) + processedWord.slice(-1) + processedWord.slice(-2, -1);
+            }
+
+            // 4. Reverse Rule 1 & 2: Remove prefixes and restore original first letter
+            // This determines the original first letter based on the prefixes.
+            if (processedWord.startsWith('la') && processedWord.length > 2) {
+                wasLaPrefixed = true;
+                processedWord = processedWord.slice(2); // Remove 'la'
+                // If 'la' was present, the original word must have started with 'y'.
+                if (!originalFirstCharGuess) { // If Rule 7 didn't provide it, set it to 'y'
+                    originalFirstCharGuess = 'y';
+                }
+            } else if (processedWord.startsWith('y') && processedWord.length > 1) {
+                processedWord = processedWord.slice(1); // Remove 'y'
+                // If Rule 7 didn't provide the original first letter, it's lost here.
+            }
+
+            // Reconstruct the word with the guessed original first letter
+            let finalReversedWord = '';
+            if (originalFirstCharGuess) {
+                finalReversedWord = originalFirstCharGuess + processedWord;
+            } else if (wasLaPrefixed) { // If 'la' was removed, it implies original started with 'y'
+                finalReversedWord = 'y' + processedWord;
+            } else {
+                // If no original first character was recovered (e.g., from old Yenglihs, or a word that didn't change much),
+                // we return the processed word as the best guess.
+                finalReversedWord = processedWord;
+            }
+
+            return restoreCase(originalInputWord, finalReversedWord);
+        }
 
         /**
-         * Copies the text content of the given element ID to the clipboard
-         * @param {string} id - The ID of the element whose text to copy
+         * Copies the text content of the given element ID to the clipboard.
+         * Provides a temporary visual feedback message.
+         * @param {string} id - The ID of the element whose text to copy.
          */
         function copyText(id) {
             const output = document.getElementById(id);
-            navigator.clipboard.writeText(output.textContent);
-            
-            // Visual feedback
-            const originalText = output.textContent;
-            output.textContent = "Copied to clipboard!";
-            output.style.backgroundColor = "#e8f5e9";
-            output.style.color = "#2e7d32";
-            
-            setTimeout(() => {
-                output.textContent = originalText;
-                output.style.backgroundColor = "";
-                output.style.color = "";
-            }, 1500);
+            navigator.clipboard.writeText(output.textContent)
+                .then(() => {
+                    const copyMessage = document.getElementById('copyMessage');
+                    copyMessage.style.display = 'block';
+                    setTimeout(() => {
+                        copyMessage.style.display = 'none';
+                    }, 1500);
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    // In a real application, you might show a user-friendly error message here.
+                });
         }
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
 <!--
-┓┏      ┓•┓  
+
+┓┏      ┓•┓  
+
 ┗┫┏┓┏┓┏┓┃┓┣┓┏
+
 ┗┛┗ ┛┗┗┫┗┗┛┗┛
-       ┛     
+
+       ┛     
+
 -->
